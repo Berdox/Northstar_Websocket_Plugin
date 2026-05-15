@@ -1,0 +1,7 @@
+{
+  "name": "northstar-websocket-plugin",
+  "version-string": "1",
+  "dependencies": [
+    "ixwebsocket"
+  ]
+}
