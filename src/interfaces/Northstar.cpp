@@ -1,4 +1,4 @@
-#include "../../include/interfaces/Northstar.h"
+#include "./Northstar.h"
 #include <stdio.h>
 
 bool InitNSSys(HMODULE nsModule) {

@@ -1,5 +1,5 @@
-#include "../include/WS_Plugin.h"
-#include "../include/interfaces/Northstar.h"
+#include "./WebsocketPlugin.h"
+#include "./interfaces/Northstar.h"
 #include <stdio.h>
 
 void InitWSPlugin(HMODULE pluginHandle, HMODULE nsHandle) {

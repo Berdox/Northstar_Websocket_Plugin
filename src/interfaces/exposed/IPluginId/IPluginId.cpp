@@ -1,6 +1,6 @@
-#include "../../../../include/interfaces/exposed/IPluginId/IPluginId.h"
-#include "../../../../include/interfaces/interfaces.h"
-#include "../../../../include/PluginConfiguration.h"
+#include "./IPluginId.h"
+#include "../../interfaces.h"
+#include "../../../PluginConfiguration.h"
 
 class CPluginId : public IPluginId
 {

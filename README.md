@@ -2,6 +2,8 @@
 A websocket plugin for northstar
 
 
+
+# Build
 cmd /k "C:\Program Files\Microsoft Visual Studio\26\Community\VC\Auxiliary\Build\vcvars64.bat"
 
 cmake --preset win-msvc-debug

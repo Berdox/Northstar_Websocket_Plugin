@@ -1,4 +1,4 @@
-#include "../../include/interfaces/Interfaces.h"
+#include "./Interfaces.h"
 #include <string.h>
 
 InterfaceReg* s_pInterfaceRegs;

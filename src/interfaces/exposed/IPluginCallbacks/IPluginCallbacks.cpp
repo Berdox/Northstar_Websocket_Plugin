@@ -1,7 +1,7 @@
-#include "../../../../include/interfaces/exposed/IPluginCallbacks/IPluginCallbacks.h"
-#include "../../../../include/interfaces/interfaces.h"
-#include "../../../../include/interfaces/Northstar.h"
-#include "../../../../include/WS_Plugin.h"
+#include "./IPluginCallbacks.h"
+#include "../../interfaces.h"
+#include "../../Northstar.h"
+#include "../../../WebsocketPlugin.h"
 #include <string>
 
 class CPluginCallbacks : public IPluginCallbacks
