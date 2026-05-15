@@ -28,7 +28,7 @@ set_target_properties(NS_WS_plugin PROPERTIES
 )
 
 set_target_properties(NS_WS_plugin PROPERTIES 
-    OUTPUT_NAME "Northstar_Websocket_Plugin"
+    OUTPUT_NAME "Websocket_Plugin"
 )
 
 #target_include_directories(NS_WS_plugin PRIVATE "include")

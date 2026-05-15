@@ -2,6 +2,7 @@
 #include <stdint.h>
 
 #define PLUGIN_CONTEXT_DEDICATED 0x1
+//#define PLUGIN_CONTEXT_CLIENT    0x2
 
 struct Color
 {
@@ -18,7 +19,7 @@ struct Color
 };
 
 // this is the plugin name
-#define PLUGIN_NAME "WS_Plugin"
+#define PLUGIN_NAME "Websocket_Plugin"
 
 // this is the name northstar uses when this plugin is logging to the console
 #define PLUGIN_LOG_NAME "WS_Plugin"
@@ -30,4 +31,4 @@ struct Color
 #define PLUGIN_DEPENDENCY_NAME "WS_PLUGIN"
 
 // this is a bitfield that determines if Northstar should load this plugin
-#define PLUGIN_CONTEXT PLUGIN_CONTEXT_DEDICATED;
+#define PLUGIN_CONTEXT PLUGIN_CONTEXT_DEDICATED; // | PLUGIN_CONTEXT_CLIENT;
