@@ -21,7 +21,16 @@ add_library(NS_WS_plugin SHARED
     "src/interfaces/exposed/IPluginCallbacks/IPluginCallbacks.cpp" 
     "src/interfaces/exposed/IPluginCallbacks/IPluginCallbacks.h"
     "src/interfaces/exposed/IPluginId/IPluginId.cpp"
-    "src/interfaces/exposed/IPluginId/IPluginId.h")
+    "src/interfaces/exposed/IPluginId/IPluginId.h" 
+    "src/WebsocketManager.h" 
+    "src/WebsocketManager.cpp" 
+    "src/interfaces/Northstar/ISquirrel.h" 
+    "src/SquirrelFunctions.h" 
+    "src/SquirrelFunctions.cpp")
+
+target_compile_definitions(NS_WS_plugin PRIVATE
+    WIN32_LEAN_AND_MEAN
+)
 
 set_target_properties(NS_WS_plugin PROPERTIES 
     PREFIX ""
@@ -32,6 +41,10 @@ set_target_properties(NS_WS_plugin PROPERTIES
 )
 
 #target_include_directories(NS_WS_plugin PRIVATE "include")
+
+target_include_directories(NS_WS_plugin PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
 
 find_package(ixwebsocket CONFIG REQUIRED)
 target_link_libraries(NS_WS_plugin PRIVATE ixwebsocket::ixwebsocket bcrypt)
