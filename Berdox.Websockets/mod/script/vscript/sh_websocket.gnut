@@ -1,0 +1,99 @@
+untyped
+
+global function HeaderConverter
+global function NS_ConnectToWebsocket
+global function NS_WriteToWebsocket
+global function NS_PollWebsocket
+global function NS_DisconnectFromWebsocket
+global function NS_GetOpenWebsockets
+
+struct {
+    table<string, bool> activeSocket
+} file
+
+// Connect to a websocket by name. callbackReadFunc is called for every message received.
+// Returns true if connection succeeded.
+bool function NS_ConnectToWebsocket(
+    string socketName,
+    string url,
+    void functionref(string) callbackReadFunc,
+    int    pollTimeInSec          = 1,
+    bool   keepExistingSocketAlive = false,
+    table<string, string> headers  = {},
+    int    connectionTimeout       = 5
+)
+{
+    bool connected = PL_ConnectToWebsocket(
+        socketName,
+        url,
+        HeaderConverter(headers),
+        connectionTimeout,
+        keepExistingSocketAlive
+    )
+
+    file.activeSocket[socketName] <- connected
+
+    if (connected)
+        thread NS_PollWebsocket(socketName, callbackReadFunc, pollTimeInSec)
+
+    return connected
+}
+
+// Send a message on a named socket. Silently drops if socket is not active.
+void function NS_WriteToWebsocket(string socketName, string message)
+{
+    if (socketName in file.activeSocket && file.activeSocket[socketName])
+    {
+        bool ok = PL_WriteToWebsocket(socketName, message)
+        if (!ok)
+        {
+            print("[WS] Write failed on '" + socketName + "', marking closed")
+            file.activeSocket[socketName] <- false
+        }
+    }
+}
+
+// Disconnect a named socket.
+void function NS_DisconnectFromWebsocket(string socketName)
+{
+    if (socketName in file.activeSocket && file.activeSocket[socketName])
+        PL_DisconnectFromWebsocket(socketName)
+
+    file.activeSocket[socketName] <- false
+}
+
+// Get all currently open socket names (from the plugin layer).
+array<string> function NS_GetOpenWebsockets()
+{
+    return PL_GetOpenWebsockets()
+}
+
+// Internal poll loop — runs as a thread per connection.
+void function NS_PollWebsocket(
+    string socketName,
+    void functionref(string) callbackReadFunc,
+    int pollTimeInSec
+)
+{
+    while (socketName in file.activeSocket && file.activeSocket[socketName])
+    {
+        wait pollTimeInSec
+
+        array<string> messages = PL_ReadFromWebsocket(socketName)
+        foreach (string message in messages)
+        {
+            callbackReadFunc(message)
+        }
+    }
+
+    print("[WS] Poll loop ended for '" + socketName + "'")
+}
+
+// Convert a header table into the |#!#|-delimited string the plugin expects.
+string function HeaderConverter(table<string, string> headerTable)
+{
+    string result = ""
+    foreach (string key, string val in headerTable)
+        result += key + "|#!#|" + val + "|#!#|"
+    return result
+}

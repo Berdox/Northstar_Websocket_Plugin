@@ -1,0 +1,14 @@
+{
+	"Name" : "Berdox.Websockets",
+	"Description": "",
+	"Version": "0.1.0",
+	"LoadPriority": 2,
+	"RequiredOnClient": false,
+	
+	"Scripts": [
+		{
+			"Path": "sh_websocket.nut",
+			"RunOn": "SERVER"
+		}
+	]
+}

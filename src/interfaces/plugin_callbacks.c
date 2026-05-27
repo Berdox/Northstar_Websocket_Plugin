@@ -6,6 +6,7 @@
 #include "interfaces/cvar.h"
 #include "interfaces/engine_interface.h"
 #include "interfaces/sys.h"
+#include "websocket/websocket.h"
 
 #define PLUGIN_NAME "exam"
 #define PLUGIN_LOG_NAME                                                                                                \
@@ -75,6 +76,7 @@ int64_t GetField(IPluginId* self, PluginField prop) {
 void Init(IPluginCallbacks* self, HMODULE module, NorthstarData* data, char reloaded) {
   init_ns_interface(module, data);
   sys_init();
+  ws_init(); 
 
   ns_log(LOG_INFO, "initializing");
 
@@ -96,6 +98,8 @@ void Finalize(IPluginCallbacks* self) {
    * 	...
    * }
    */
+
+  ws_shutdown();
 
   ns_log(LOG_INFO, "Finalized.");
 }
@@ -152,7 +156,9 @@ void OnLibraryLoaded(IPluginCallbacks* self, HMODULE module, const char* name) {
   }
 }
 
-void RunFrame(IPluginCallbacks* self) {}
+void RunFrame(IPluginCallbacks* self) {
+  ws_service();
+}
 
 IPluginCallbacks g_pluginCallbacks = {
     .vftable = &(struct IPluginCallbacks_vftable

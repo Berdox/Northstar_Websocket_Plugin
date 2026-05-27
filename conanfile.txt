@@ -1,0 +1,12 @@
+[requires]
+libwebsockets/4.5.8
+
+[options]
+# Force dependencies to build as static libraries so they are baked 
+# directly inside your final Websocket_Plugin.dll
+*:shared=False
+openssl/*:shared=False
+
+[generators]
+CMakeToolchain
+CMakeDeps
