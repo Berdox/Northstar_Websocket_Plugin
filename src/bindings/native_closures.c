@@ -3,71 +3,6 @@
 #include "bindings/relay.h"
 #include "interfaces/sys.h"
 
-// At top of native_closures.c — after existing includes:
-#include "websocket/websocket.h"
-
-// PL_ConnectToWebsocket(string name, string url, string headers, int timeout, bool keep_alive) -> bool
-SQRESULT Script_PL_ConnectToWebsocket(HSquirrelVM *sqvm) {
-    SQRelay *api = sqapi(SC_SERVER);
-    const SQChar *name     = api->sq_getstring(sqvm, 1);
-    const SQChar *url      = api->sq_getstring(sqvm, 2);
-    const SQChar *headers  = api->sq_getstring(sqvm, 3);
-    SQInteger     timeout  = api->sq_getinteger(sqvm, 4);
-    SQBool        keepalive = api->sq_getbool(sqvm, 5);
-    api->sq_pushbool(sqvm, ws_connect(name, url, headers, (int)timeout, keepalive));
-    return SQRESULT_NOTNULL;
-}
-
-// PL_WriteToWebsocket(string name, string message) -> bool
-SQRESULT Script_PL_WriteToWebsocket(HSquirrelVM *sqvm) {
-    SQRelay *api = sqapi(SC_SERVER);
-    const SQChar *name = api->sq_getstring(sqvm, 1);
-    const SQChar *msg  = api->sq_getstring(sqvm, 2);
-    api->sq_pushbool(sqvm, ws_write(name, msg));
-    return SQRESULT_NOTNULL;
-}
-
-// PL_DisconnectFromWebsocket(string name) -> void
-SQRESULT Script_PL_DisconnectFromWebsocket(HSquirrelVM *sqvm) {
-    SQRelay *api = sqapi(SC_SERVER);
-    const SQChar *name = api->sq_getstring(sqvm, 1);
-    ws_disconnect(name);
-    return SQRESULT_NULL;
-}
-
-// PL_ReadFromWebsocket(string name) -> array<string>
-SQRESULT Script_PL_ReadFromWebsocket(HSquirrelVM *sqvm) {
-    SQRelay *api = sqapi(SC_SERVER);
-    const SQChar *name = api->sq_getstring(sqvm, 1);
-
-    static char msgs[MAX_QUEUED_MESSAGES][MAX_MESSAGE_LEN];
-    int count = ws_read(name, msgs, MAX_QUEUED_MESSAGES);
-
-    api->sq_newarray(sqvm, 0);
-    for (int i = 0; i < count; i++) {
-        api->sq_pushstring(sqvm, msgs[i], -1);
-        api->sq_arrayappend(sqvm, -2); // -2 = the array we just created
-    }
-    return SQRESULT_NOTNULL;
-}
-
-// PL_GetOpenWebsockets() -> array<string>
-SQRESULT Script_PL_GetOpenWebsockets(HSquirrelVM *sqvm) {
-    SQRelay *api = sqapi(SC_SERVER);
-
-    static char names[MAX_WS_CONNECTIONS][MAX_SOCKET_NAME_LEN];
-    int count = ws_get_open(names, MAX_WS_CONNECTIONS);
-
-    api->sq_newarray(sqvm, 0);
-    for (int i = 0; i < count; i++) {
-        api->sq_pushstring(sqvm, names[i], -1);
-        api->sq_arrayappend(sqvm, -2);
-    }
-    return SQRESULT_NOTNULL;
-}
-
-
-
 SQRESULT Script_ExampleFunction(HSquirrelVM* sqvm) {
   SQRelay* api = sqapi(SC_SERVER); // For squirrel api functions it generally does not matter if the function
                                    // pointer is in server.dll or client.dll.
@@ -87,40 +22,6 @@ SQRESULT Script_ExampleFunction(HSquirrelVM* sqvm) {
   return SQRESULT_NOTNULL;
 }
 
-
-SQRESULT Script_NativePrint(HSquirrelVM* sqvm) {
-  /*
-   * Get the Squirrel API relay for the server VM.
-   * It doesn't usually matter whether we use SC_SERVER or SC_CLIENT here —
-   * sq_getstring has the same behavior in both — but it's good practice to
-   * use the context that matches where you registered the function.
-   */
-  SQRelay* api = sqapi(SC_SERVER);
-
-  /*
-   * Read the first argument (stack index 1) as a string.
-   * The returned pointer points directly into the VM's memory — it's valid
-   * for the duration of this call. Do NOT free it or store it long-term.
-   */
-  const SQChar* msg = api->sq_getstring(sqvm, 1);
-
-  /*
-   * Log the message through Northstar's sys interface.
-   * This writes to the Northstar console (and log file if logging is enabled).
-   * LOG_INFO, LOG_WARN, LOG_ERR are the three severity levels.
-   */
-  ns_log(LOG_INFO, msg);
-
-  /*
-   * Return SQRESULT_NULL because this function has no return value (void).
-   * If we had pushed a return value (e.g. api->sq_pushinteger(sqvm, 42)),
-   * we would return SQRESULT_NOTNULL instead.
-   */
-  return SQRESULT_NULL;
-}
-
-
-
 // internally used linked list to keep track of registered squirrel native
 // closures
 struct SQFunctionRegistrationList;
@@ -131,38 +32,6 @@ void sv_register_native_closures(CSquirrelVM* sqvm) {
       sqvm, "int", "ExampleFunction", "int a, int b", "add both parameters and return the result",
       Script_ExampleFunction
   );
-
-   sv_bind_native_closure(
-    sqvm,
-    "void",
-    "NativePrint",
-    "string msg",
-    "Write a message to the Northstar console from a Squirrel script.",
-    Script_NativePrint
-  );
-
-
-
-  sv_bind_native_closure(sqvm, "bool",          "PL_ConnectToWebsocket",
-    "string name, string url, string headers, int timeout, bool keep_alive",
-    "Connect to a WebSocket server. Returns true on success.", Script_PL_ConnectToWebsocket);
-
-  sv_bind_native_closure(sqvm, "bool",          "PL_WriteToWebsocket",
-      "string name, string message",
-      "Send a message. Returns false if socket not open.", Script_PL_WriteToWebsocket);
-
-  sv_bind_native_closure(sqvm, "void",          "PL_DisconnectFromWebsocket",
-      "string name",
-      "Close and remove the named WebSocket.", Script_PL_DisconnectFromWebsocket);
-
-  sv_bind_native_closure(sqvm, "array< string >", "PL_ReadFromWebsocket",
-      "string name",
-      "Drain all queued received messages since last call.", Script_PL_ReadFromWebsocket);
-
-  sv_bind_native_closure(sqvm, "array< string >", "PL_GetOpenWebsockets",
-      "",
-      "Get names of all currently open WebSocket connections.", Script_PL_GetOpenWebsockets);
-
 }
 
 // Add your client native closures here

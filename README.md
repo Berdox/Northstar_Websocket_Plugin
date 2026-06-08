@@ -4,8 +4,21 @@ A websocket plugin for northstar
 
 
 # Build
-cmd /k "C:\Program Files\Microsoft Visual Studio\26\Community\VC\Auxiliary\Build\vcvars64.bat"
 
-cmake --preset win-msvc-debug
+docker build -t cpp-unified-env .
 
-cmake --build --preset win-msvc-debug
+docker run -it --rm `-v "${PWD}:/root/workspace" ` -v conan_cache:/root/.conan2/p ` cpp-unified-env /bin/bash
+
+# 1. Install dependencies using the Windows profile
+conan install . --output-folder=build/windows-gcc --profile:build=linux-gcc --profile:host=windows-mingw --build=missing
+
+# 2. Configure and Compile
+cmake --preset windows-gcc
+cmake --build --preset windows-gcc
+
+# 1. Install dependencies using the Linux profile
+conan install . --output-folder=build/linux-gcc --profile:build=linux-gcc --profile:host=linux-gcc --build=missing -s build_type=Debug
+
+# 2. Configure and Compile
+cmake --preset linux-gcc
+cmake --build --preset linux-gcc

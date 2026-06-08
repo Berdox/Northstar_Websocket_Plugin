@@ -9,6 +9,13 @@
 		{
 			"Path": "sh_websocket.nut",
 			"RunOn": "SERVER"
+		},
+        {
+			"Path": "test.nut",
+			"RunOn": "SERVER",
+            "ServerCallback": {
+				"Before": "TestSocket_Init"
+			}
 		}
 	]
 }

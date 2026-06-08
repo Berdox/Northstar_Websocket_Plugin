@@ -2,6 +2,7 @@ untyped
 
 global function HeaderConverter
 global function NS_ConnectToWebsocket
+global function NS_ConnectWithRetry
 global function NS_WriteToWebsocket
 global function NS_PollWebsocket
 global function NS_DisconnectFromWebsocket
@@ -37,6 +38,45 @@ bool function NS_ConnectToWebsocket(
         thread NS_PollWebsocket(socketName, callbackReadFunc, pollTimeInSec)
 
     return connected
+}
+
+void function NS_ConnectWithRetry(
+    string socketName,
+    string url,
+    void functionref(string) callbackReadFunc,
+    int pollTimeInSec     = 1,
+    int retryDelayInSec   = 10,
+    table<string, string> headers = {}
+)
+{
+    thread void function() : (socketName, url, callbackReadFunc, pollTimeInSec, retryDelayInSec, headers)
+    {
+        while (true)
+        {
+            print("[WS] Connecting '" + socketName + "'...")
+
+            bool ok = NS_ConnectToWebsocket(
+                socketName, url, callbackReadFunc, pollTimeInSec, false, headers
+            )
+
+            if (ok)
+            {
+                print("[WS] '" + socketName + "' connected.")
+
+                // Wait until the socket goes dead before retrying
+                while (socketName in file.activeSocket && file.activeSocket[socketName])
+                    wait 1
+
+                print("[WS] '" + socketName + "' dropped, reconnecting in " + retryDelayInSec + "s")
+            }
+            else
+            {
+                print("[WS] '" + socketName + "' failed, retrying in " + retryDelayInSec + "s")
+            }
+
+            wait retryDelayInSec
+        }
+    }()
 }
 
 // Send a message on a named socket. Silently drops if socket is not active.
@@ -97,3 +137,4 @@ string function HeaderConverter(table<string, string> headerTable)
         result += key + "|#!#|" + val + "|#!#|"
     return result
 }
+

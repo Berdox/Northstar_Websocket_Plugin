@@ -30,8 +30,6 @@ add_library(NS_WS_plugin SHARED
     src/bindings/relay.h
     src/bindings/relay.c
     src/bindings/assert.h
-    src/websocket/websocket.c
-    src/websocket/websocket.h
     )
 
 
