@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+		<!-- Native AOT turns this into a real native DLL, not a managed assembly -->
+		<OutputType>Library</OutputType>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
+		<!-- Native AOT + native shared library (exports UnmanagedCallersOnly methods) -->
+		<PublishAot>true</PublishAot>
+		<NativeLib>Shared</NativeLib>
+
+		<!-- Titanfall 2 / Northstar is 64-bit -->
+		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+		<SelfContained>true</SelfContained>
+
+		<!-- Name of the resulting DLL, e.g. NorthstarCsPlugin.dll -->
+		<AssemblyName>NorthstarCsPlugin</AssemblyName>
+
+		<!-- Smaller / cleaner native output -->
+		<InvariantGlobalization>true</InvariantGlobalization>
+		<StackTraceSupport>false</StackTraceSupport>
+
+	  <AssemblyName>NorthstarWebsocketCsPlugin</AssemblyName>
+  </PropertyGroup>
+
+</Project>

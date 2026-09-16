@@ -137,4 +137,3 @@ string function HeaderConverter(table<string, string> headerTable)
         result += key + "|#!#|" + val + "|#!#|"
     return result
 }
-

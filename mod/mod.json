@@ -1,0 +1,19 @@
+{
+    "Name": "CSharpWebsocket",
+    "Description": "Squirrel wrapper functions (NS_) for the NorthstarWebsocketCsPlugin plugin.",
+    "Version": "0.1.0",
+    "LoadPriority": 2,
+    "Scripts": [
+        {
+            "Path": "websocket.nut",
+            "RunOn": "CLIENT || SERVER"
+        },
+	    {
+			"Path": "test_websocket.nut",
+			"RunOn": "SERVER",
+			"ServerCallback": {
+			"After": "TestSockets_Init"
+        }
+		}
+    ]
+}

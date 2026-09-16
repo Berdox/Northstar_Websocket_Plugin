@@ -73,3 +73,59 @@ share/python-wheels/
 # Environment variables and secrets
 .env
 .secret
+
+
+
+## Build results and output directories
+[Bb]in/
+[Oo]bj/
+[LLEe]og/
+[LLEe]ogs/
+build/
+dist/
+
+## Visual Studio files
+.vs/
+*.user
+*.userosscache
+*.sln.docstates
+*.suo
+*.userlibraries
+
+## User-specific and environment configuration
+*.rsuser
+*.cache
+*.exe-*.config
+
+## NuGet packages
+*.nupkg
+**/packages/*
+!**/packages/build/
+!**/packages/repository.config
+
+## Test result files
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+
+## Code coverage results
+*.g.cs
+*.g.i.cs
+
+## Publishing / Deployment outputs
+*.azurePubxml
+*.pubxml
+*.pubxml.user
+
+## ReSharper and JetBrains Rider
+_ReSharper*/
+*.resharper
+*.Rider*/
+.idea/
+
+## Crash dumps and backup files
+*.stackdump
+*.bak
+*.tmp
+*.log
