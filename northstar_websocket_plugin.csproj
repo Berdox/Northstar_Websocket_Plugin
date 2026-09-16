@@ -23,7 +23,7 @@
 		<InvariantGlobalization>true</InvariantGlobalization>
 		<StackTraceSupport>false</StackTraceSupport>
 
-	  <AssemblyName>NorthstarWebsocketCsPlugin</AssemblyName>
+	  <AssemblyName>NS_Websocket_Plugin</AssemblyName>
   </PropertyGroup>
 
 </Project>
