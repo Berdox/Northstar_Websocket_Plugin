@@ -3,12 +3,12 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace NorthstarWebsocketCsPlugin;
+namespace northstar_websocket_plugin.src.bindings;
 
 //*************************************************************************************************
 // Interchange of helpers for plugin, SuirrelInterop, and WebsockPlugin
 //*************************************************************************************************
-internal static unsafe class NativeInterop {
+internal static unsafe class NativeBinding {
     //*************************************************************************************************
     // Gets the addres of exported function of variable from a DLL
     // gModule = handle to dll

@@ -1,6 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
-using static NorthstarWebsocketCsPlugin.NativeInterop;
+using static NorthstarWebsocketCsPlugin.NativeBinding;
 
 namespace NorthstarWebsocketCsPlugin;
 
@@ -128,7 +128,7 @@ internal unsafe struct SqApi {
 // Helper methods to acess CSquirrelVM memory structures, resolving function pointer tables,
 // registering native closures, and marshaling values acress the VM stack.
 //*************************************************************************************************
-internal static unsafe class SquirrelInterop {
+internal static unsafe class SquirrelBinding {
     // Offset (0x08) within CSquirrelVM to get the underlying HSquirrelVM handle.
     private const int CSquirrelVM_SqvmOffset = 0x08;
 

@@ -6,8 +6,8 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using static NorthstarWebsocketCsPlugin.NativeInterop;
-using static NorthstarWebsocketCsPlugin.SquirrelInterop;
+using static NorthstarWebsocketCsPlugin.NativeBinding;
+using static NorthstarWebsocketCsPlugin.SquirrelBinding;
 
 namespace NorthstarWebsocketCsPlugin;
 
@@ -33,12 +33,12 @@ internal static unsafe class WebsocketPlugin {
     //**************************************************************************************************
     public static void OnLibraryLoaded(string moduleName, IntPtr moduleBase) {
         if (string.Equals(moduleName, "server.dll", StringComparison.OrdinalIgnoreCase) && !s_serverApi.IsReady) {
-            s_serverApi = SquirrelInterop.BuildServerApi(moduleBase);
+            s_serverApi = SquirrelBinding.BuildServerApi(moduleBase);
             DebugLog($"WebsocketPlugin: resolved server.dll squirrel API at 0x{moduleBase:X}");
         }
 
         else if (string.Equals(moduleName, "client.dll", StringComparison.OrdinalIgnoreCase) && !s_clientApi.IsReady) {
-            s_clientApi = SquirrelInterop.BuildClientApi(moduleBase);
+            s_clientApi = SquirrelBinding.BuildClientApi(moduleBase);
             DebugLog($"WebsocketPlugin: resolved client.dll squirrel API at 0x{moduleBase:X}");
         }
     }
@@ -59,7 +59,7 @@ internal static unsafe class WebsocketPlugin {
     // csqvn = pointer to Squirrel VM
     //**************************************************************************************************
     public static void RegisterForSqvm(IntPtr csqvm) {.
-        ScriptContext context = SquirrelInterop.GetContext(csqvm);
+        ScriptContext context = SquirrelBinding.GetContext(csqvm);
         DebugLog($"WebsocketPlugin: OnSqvmCreated context={context}");
 
         switch (context) {
